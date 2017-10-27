@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <style>
+        ul {
+            list-style: none
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        div {
+            width: 1200px;
+            height: 400px;
+            margin: 50px auto;
+            border: 1px solid red;
+            overflow: hidden;
+        }
+
+        div li {
+            width: 240px;
+            height: 400px;
+            float: left;
+        }
+
+        div ul {
+            width: 1300px;
+        }
+    </style>
+</head>
+<body>
+<div id="box">
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+</div>
+<script>
+    //1 获取元素
+    var box = document.getElementById("box");
+    var lis = box.children[0].children;//所有的li
+
+    //2 遍历设置每个li的背景图
+    for (var i = 0; i < lis.length; i++) {
+        lis[i].style.backgroundImage = "url(images/" + (i + 1) + ".jpg)";
+
+        lis[i].onmouseover = function () {
+            for (var i = 0; i < lis.length; i++) {
+                animate(lis[i], "widtn", 100);
+            }
+            animate(this, "width", 800);
+        };
+        lis[i].onmouseout=function(){
+            for(var i=0;i<lis.length;i++){
+                animate(lis[i],"width",240)
+            }
+        };
+    }
+    function animate(tag, attr, target) {
+        clearInterval(tag.timer);
+        tag.timer = setInterval(function () {
+            //1 获取任意的某个样式值
+            //使用parseInt的作用为，可以去除获取样式的单位
+            //如果某个样式没有设置初始值，获取结果可能是auto，可以使用逻辑运算符进行避免
+            //方式2：陈同学提供的方式，可以使用 parseInt(0+getStyle(tag, attr)),拼接字符串，保证至少取到一个0
+            var current = parseInt(getStyle(tag, attr)) || 0;
+            var step = (target - current) / 10;
+            step = step > 0 ? Math.ceil(step) : Math.floor(step);
+            current = current + step;
+            //4 设置给指定的样式
+            tag.style[attr] = current + "px";
+            if (current == target) {
+                clearInterval(tag.timer);
+            }
+        }, 1);
+    }
+
+    function getStyle(tag, attr) {
+        if (tag.currentStyle) {
+            //说明currentStyle支持，获取结果是对象
+            return tag.currentStyle[attr];
+        } else {
+            //说明不支持currentStyle，值为undefined
+            return getComputedStyle(tag, null)[attr];
+        }
+    }
+</script>
+</body>
+</html>
